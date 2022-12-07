@@ -82,7 +82,7 @@ function Line({ word, setLines, lineIndex, activeLine }: LineParams) {
   const [currentLine, setCurrentLine] = useState(['', '', '', '', '']);
   const [success, setSuccess] = useState(['', '', '', '', '']);
 
-  const setLetter = (letterIndex: number, value: string, e: Element) => {
+  const setLetter = (letterIndex: number, value: string, e: HTMLElement) => {
     setCurrentLine((e: Array<string>) => {
       e[letterIndex] = value.toLowerCase();
       return [...e];
