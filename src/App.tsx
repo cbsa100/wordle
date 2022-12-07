@@ -92,8 +92,8 @@ function Line({ word, setLines, lineIndex, activeLine }: LineParams) {
       return [...lines];
     });
     if (value === '') return;
-    let next = e;
-    while ((next = next.nextElementSibling)) {
+    let next: HTMLElement | null = e;
+    while ((next = next.nextElementSibling as HTMLElement)) {
       if (next == null) break;
       if (next.tagName.toLowerCase() == 'input') {
         next.focus();
