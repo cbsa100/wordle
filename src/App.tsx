@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, KeyboardEvent } from 'react';
 import './App.css';
 import { wordList } from './wordlist';
 const word = wordList[Math.floor(Math.random() * wordList.length)];
@@ -11,8 +11,30 @@ function App() {
     ['', '', '', '', ''],
     ['', '', '', '', ''],
   ]);
+  const focusAdj = (e: KeyboardEvent<HTMLInputElement>) => {
+    let target: HTMLInputElement = e.target as HTMLInputElement;
+    if (e.code !== 'Backspace' && e.code !== 'Enter' && target.value !== '') {
+      while ((target = target.nextElementSibling as HTMLInputElement)) {
+        if (target == null) break;
+        if (target.tagName.toLowerCase() == 'input') {
+          target.focus();
+          break;
+        }
+      }
+    }
 
-  const checkLine = () => {
+    if (e.code === 'Backspace' && target.value === '') {
+      while ((target = target.previousElementSibling as HTMLInputElement)) {
+        if (target == null) break;
+        if (target.tagName.toLowerCase() == 'input') {
+          target.focus();
+          target.select();
+          break;
+        }
+      }
+    }
+  };
+  const checkLine = async () => {
     if (activeLine > 4) {
       location.reload();
       return;
@@ -29,23 +51,17 @@ function App() {
       setActiveLine(200);
       alert('success');
     } else {
-      setActiveLine(e => e + 1);
+      await setActiveLine(e => e + 1);
+      const firstActiveInput = document.querySelector('input:not([disabled])') as HTMLElement;
+      firstActiveInput.focus();
       alert('fail');
     }
   };
-
   useEffect(() => {
     const keyDownHandler = (event: { key: string; preventDefault: () => void }) => {
-      console.log('User pressed: ', event.key);
-
       if (event.key === 'Enter') {
         event.preventDefault();
-
-        // 👇️ your logic here
-        if (event.key === 'Enter') {
-          event.preventDefault();
-          document?.getElementById('submit')?.click();
-        }
+        document?.getElementById('submit')?.click();
       }
     };
 
@@ -59,11 +75,41 @@ function App() {
   return (
     <div className='App'>
       <h1>SHARONDLE</h1>
-      <Line word={word} setLines={setLines} lineIndex={0} activeLine={activeLine} />
-      <Line word={word} setLines={setLines} lineIndex={1} activeLine={activeLine} />
-      <Line word={word} setLines={setLines} lineIndex={2} activeLine={activeLine} />
-      <Line word={word} setLines={setLines} lineIndex={3} activeLine={activeLine} />
-      <Line word={word} setLines={setLines} lineIndex={4} activeLine={activeLine} />
+      <Line
+        word={word}
+        setLines={setLines}
+        lineIndex={0}
+        activeLine={activeLine}
+        focusAdj={focusAdj}
+      />
+      <Line
+        word={word}
+        setLines={setLines}
+        lineIndex={1}
+        activeLine={activeLine}
+        focusAdj={focusAdj}
+      />
+      <Line
+        word={word}
+        setLines={setLines}
+        lineIndex={2}
+        activeLine={activeLine}
+        focusAdj={focusAdj}
+      />
+      <Line
+        word={word}
+        setLines={setLines}
+        lineIndex={3}
+        activeLine={activeLine}
+        focusAdj={focusAdj}
+      />
+      <Line
+        word={word}
+        setLines={setLines}
+        lineIndex={4}
+        activeLine={activeLine}
+        focusAdj={focusAdj}
+      />
       <button id='submit' onClick={checkLine}>
         {activeLine > 4 ? 'Play Again' : 'Check Word'}
       </button>
@@ -77,11 +123,11 @@ interface LineParams {
   setLines: Function;
   lineIndex: number;
   activeLine: number;
+  focusAdj: Function;
 }
-function Line({ word, setLines, lineIndex, activeLine }: LineParams) {
+function Line({ word, setLines, lineIndex, activeLine, focusAdj }: LineParams) {
   const [currentLine, setCurrentLine] = useState(['', '', '', '', '']);
   const [success, setSuccess] = useState(['', '', '', '', '']);
-
   const setLetter = (letterIndex: number, value: string, e: HTMLElement) => {
     setCurrentLine((e: Array<string>) => {
       e[letterIndex] = value.toLowerCase();
@@ -91,15 +137,6 @@ function Line({ word, setLines, lineIndex, activeLine }: LineParams) {
       lines[lineIndex] = currentLine;
       return [...lines];
     });
-    if (value === '') return;
-    let next: HTMLElement | null = e;
-    while ((next = next.nextElementSibling as HTMLElement)) {
-      if (next == null) break;
-      if (next.tagName.toLowerCase() == 'input') {
-        next.focus();
-        break;
-      }
-    }
   };
   useEffect(() => {
     if (activeLine > lineIndex) {
@@ -124,7 +161,6 @@ function Line({ word, setLines, lineIndex, activeLine }: LineParams) {
       setSuccess(buildSuccess);
     }
   }, [activeLine]);
-
   return (
     <div className='line'>
       {Array.from('a'.repeat(5)).map((ele, letterIndex) => {
@@ -137,6 +173,10 @@ function Line({ word, setLines, lineIndex, activeLine }: LineParams) {
             value={currentLine[letterIndex]}
             onChange={e => {
               setLetter(letterIndex, e.target.value, e.target);
+              focusAdj(e);
+            }}
+            onKeyUp={e => {
+              focusAdj(e);
             }}
             disabled={activeLine !== lineIndex}
             className='letter'
