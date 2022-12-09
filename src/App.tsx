@@ -49,12 +49,10 @@ function App() {
     }
     if (lines[activeLine].join('') === word) {
       setActiveLine(200);
-      alert('success');
     } else {
       await setActiveLine(e => e + 1);
       const firstActiveInput = document.querySelector('input:not([disabled])') as HTMLElement;
       firstActiveInput.focus();
-      alert('fail');
     }
   };
   useEffect(() => {

@@ -55,13 +55,14 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
-
+.line {
+  width: 100%;
+}
 input {
   background-color: #3b3b3b;
   width: 60px;
-  height: 60px;
-  max-width: 15%;
-  max-height: 15%;
+  max-width: calc(calc(100% / 6) - 13px);
+  aspect-ratio: 1 / 1;
   font-size: 40px;
   margin: 5px;
   margin-bottom: 20px;
