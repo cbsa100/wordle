@@ -4,7 +4,6 @@
   line-height: 24px;
   font-weight: 400;
 
-  color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
 
@@ -45,6 +44,7 @@ button {
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
+  color: white;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -57,6 +57,7 @@ button:focus-visible {
 }
 
 input {
+  background-color: #3b3b3b;
   width: 60px;
   height: 60px;
   max-width: 15vw;
